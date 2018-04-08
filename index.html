@@ -1,0 +1,159 @@
+<html>
+<head>
+	<title>Chat Test</title>
+	<style type="text/css">
+		@import "http://fonts.googleapis.com/css?family=Raleway";
+		/*----------------------------------------------
+		CSS settings for HTML div Exact Center
+		------------------------------------------------*/
+		div#login_popup {
+		position:absolute;
+		left:50%;
+		top:17%;
+		margin-left:-202px;
+		font-family:'Raleway',sans-serif;
+		z-index:9999;
+		display:none;
+		}
+		#login_form {
+		max-width:300px;
+		min-width:250px;
+		padding:10px 50px;
+		border:2px solid gray;
+		border-radius:10px;
+		font-family:raleway;
+		background-color:#fff
+		}
+		p {
+		margin-top:30px
+		}
+		h2 {
+		background-color:#FEFFED;
+		padding:20px 35px;
+		margin:-10px -50px;
+		text-align:center;
+		border-radius:10px 10px 0 0
+		}
+		hr {
+		margin:10px -50px;
+		border:0;
+		border-top:1px solid #ccc
+		}
+		input {
+		width:82%;
+		padding:10px;
+		margin-top:30px;
+		border:1px solid #ccc;
+		padding-left:40px;
+		font-size:16px;
+		font-family:raleway
+		}
+		input[type=submit] {
+		text-decoration:none;
+		width:100%;
+		text-align:center;
+		display:block;
+		background-color:#FFBC00;
+		color:#fff;
+		border:1px solid #FFCB00;
+		padding:10px 0;
+		font-size:20px;
+		cursor:pointer;
+		border-radius:5px
+		}
+		span {
+		color:red;
+		font-weight:700
+		}
+
+
+		#container {
+
+		}
+
+		#user_list_area {
+			border: 1px solid black;
+			position: fixed;
+			left: 5px;
+			top: 5px;
+			width: 180px;
+			height: 480px;
+			overflow-y: scroll;
+		}
+
+		#user_list_area {
+			text-align: center;
+			width: 180px;
+			height: 480px;
+			overflow-y: scroll;
+			border:2px solid gray;
+			border-radius:10px;
+			font-family:raleway;
+			background-color:#fff
+		}
+
+		#chat_area {
+			position: fixed;
+			left: 190px;
+			top: -11px;
+			width: 480px;
+			height: 480px;
+		}
+
+		#chat_box {
+			width: 480px;
+			height: 480px;
+			overflow-y: scroll;
+			border:2px solid gray;
+			border-radius:10px;
+			font-family:raleway;
+			background-color:#fff;
+			resize: both;
+		}
+		#input_box {
+			border:2px solid gray;
+			border-radius:10px;
+			font-family:raleway;
+			background-color:#fff
+		}
+		#send_button {
+			visibility: hidden;
+		}
+		.chat_message {
+			max-width: 30;
+		}
+
+	</style>
+</head>
+<body>
+	<div id="login_popup">
+		<form id="login_form">
+			<h2 id="login_popup_text"></h2>
+			<hr>
+			<input id="username" name="username" placeholder="username" type="text">
+			<input id="password" name="password" placeholder="password" type="password">
+			<input id="login_button" type="submit" value="Log in">
+		</form>
+	</div>
+
+	<div id='container'>
+		<div id='user_list_area'>
+			<p id='user_list'></p>
+		</div>
+		<div id='chat_area'>
+			<p id='chat_box'></p>
+			<form id="chat_form" left="-20px">
+				<input id='input_box' type='form' placeholder="Type a message...">
+				<input id='send_button' type="submit" value="Send">
+			</form>
+		</div>
+	</div>
+	
+	
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+	<script src="chat.js"></script>
+	
+	
+</body>
+</html>
