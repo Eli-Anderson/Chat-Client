@@ -1,17 +1,44 @@
 $(document).ready(function(){
-	var socket = io.connect();
-	var userList = document.getElementById("user_list");
-	var chatBox = document.getElementById("chat_box");
-	var inputBox = document.getElementById("input_box");
-	var sendButton = document.getElementById("send_button");
+	let socket = io.connect();
+	let userList = document.getElementById("user_list");
+	let chatBox = document.getElementById("chat_box");
+	let inputBox = document.getElementById("input_box");
+	let sendButton = document.getElementById("send_button");
 
-	var input_username = document.getElementById("username");
-	var input_password = document.getElementById("password");
-	var loginButton = document.getElementById("login_button");
+	let input_username = document.getElementById("username");
+	let input_password = document.getElementById("password");
+	let loginButton = document.getElementById("login_button");
 
-	var username = "User"+Math.floor(Math.random()*10000000)
-	var messageArray = [];
-	var userArray = [];
+	let username = "User"+Math.floor(Math.random()*10000000)
+	let messageArray = [];
+	let userArray = [];
+
+	let ORIGINAL_CHAT_AREA_HEIGHT = $("#chat_area").height();
+
+	let onResize = function () {
+
+		// hide user list if window width is too small
+		if ($("#chat_area").width() + $("#user_list_area").width() > $(window).width() - 30) {
+			$("#user_list_area").hide();
+		} else {
+			$("#user_list_area").show();
+		}
+
+		// if window width is smaller than default chat area size,
+		// sets the chat area to the width of the window
+		if ($(window).width() < 480) {
+			$("#chat_area").width("100%");
+		} else {
+			$("#chat_area").width(480);
+		}
+		if ($(window).height() < ORIGINAL_CHAT_AREA_HEIGHT) {
+			$("#chat_box").height($(window).height() - ($("#chat_form").height() + 41));
+			//@TODO: Also change user list height
+		}
+	}
+	onResize();
+	$(window).resize(onResize);
+	
 
 	socket.on("getLoginDetails", function (data) {
 		document.getElementById("login_popup").style.display = "block";
@@ -33,7 +60,7 @@ $(document).ready(function(){
 		let para = document.createElement("p");
 		let text = getParsedText(data.text);
 		para.innerHTML = (data.timestamp + " " +data.username + ": "+text);
-		para.class = "chat_message";
+		para.classList.add("chat_message");
 		chatBox.appendChild(para);
 		
 		chatBox.scrollTop = chatBox.scrollHeight;
@@ -47,13 +74,17 @@ $(document).ready(function(){
 		addUser(data);
 	});
 
+	$(chat_box).resize(function (e) {
+		console.log('resizing')
+	});
+
 	$("#chat_form").submit(function (e) {
 		e.preventDefault();
 		console.log("called")
 		if (inputBox.value != ""){
-			var d = new Date();
+			let d = new Date();
 
-			var data = {
+			let data = {
 				"username":username,
 				"text":inputBox.value,
 				"timestamp": d.getHours()+":"+d.getMinutes()+":"+d.getSeconds(),

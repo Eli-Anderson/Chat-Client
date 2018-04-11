@@ -1,4 +1,4 @@
-var express = require("express"),
+let express = require("express"),
     app = express(),
     server = require("http").createServer(app),
     io = require("socket.io").listen(server);
@@ -8,11 +8,11 @@ app.get('/', function (req, res) {
     res.sendfile(__dirname + "/index.html");
 });
 
-var userList = {}
-var sockets = {}
-var messageArray = [];
-var lastMessage;
-var lastUser;
+let userList = {}
+let sockets = {}
+let messageArray = [];
+let lastMessage;
+let lastUser;
 
 
 
@@ -69,7 +69,7 @@ io.sockets.on("connection", function (socket) {
 
 	socket.on("disconnect", function () {
 		console.log("A client has disconnected: "+socket.id+" "+socket.handshake.address);
-		for (var i = Users.users.length - 1; i >= 0; i--) {
+		for (let i = Users.users.length - 1; i >= 0; i--) {
 			if (Users.users[i].id == socket.id) {
 				Users.users.splice(i, 1)
 			}

@@ -1,5 +1,7 @@
+<!DOCTYPE html>
 <html>
 <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Chat Test</title>
 	<style type="text/css">
 		@import "http://fonts.googleapis.com/css?family=Raleway";
@@ -24,9 +26,7 @@
 		font-family:raleway;
 		background-color:#fff
 		}
-		p {
-		margin-top:30px
-		}
+		
 		h2 {
 		background-color:#FEFFED;
 		padding:20px 35px;
@@ -39,7 +39,7 @@
 		border:0;
 		border-top:1px solid #ccc
 		}
-		input {
+		.login_input {
 		width:82%;
 		padding:10px;
 		margin-top:30px;
@@ -61,31 +61,13 @@
 		cursor:pointer;
 		border-radius:5px
 		}
-		span {
-		color:red;
-		font-weight:700
-		}
-
-
-		#container {
-
-		}
 
 		#user_list_area {
-			border: 1px solid black;
-			position: fixed;
-			left: 5px;
-			top: 5px;
-			width: 180px;
-			height: 480px;
-			overflow-y: scroll;
-		}
-
-		#user_list_area {
-			text-align: center;
-			width: 180px;
-			height: 480px;
-			overflow-y: scroll;
+			float:left;
+			text-align:center;
+			width:180px;
+			height:480px;
+			overflow-y:scroll;
 			border:2px solid gray;
 			border-radius:10px;
 			font-family:raleway;
@@ -93,60 +75,74 @@
 		}
 
 		#chat_area {
-			position: fixed;
-			left: 190px;
-			top: -11px;
-			width: 480px;
-			height: 480px;
+			float:left;
+			width:480px;
+			min-width: 300px;
+			min-height: 580px;
+			overflow: hidden;
+			resize: both;
 		}
 
 		#chat_box {
-			width: 480px;
-			height: 480px;
-			overflow-y: scroll;
+			height:480px;
+			min-height:200px;
+			width:98%;
+			overflow-y:scroll;
 			border:2px solid gray;
 			border-radius:10px;
 			font-family:raleway;
 			background-color:#fff;
-			resize: both;
 		}
 		#input_box {
-			border:2px solid gray;
-			border-radius:10px;
-			font-family:raleway;
+			width:calc(100% - 50px);
 			background-color:#fff
+
+			padding:10px;
+			margin-top:30px;
+			border:2px solid #ccc;
+			border-radius:10px;
+			padding-left:40px;
+			font-size:16px;
+			font-family:raleway
 		}
 		#send_button {
-			visibility: hidden;
+			display: none
 		}
 		.chat_message {
-			max-width: 30;
+			word-wrap: break-word;
+		}
+		#test {
+			float:left;
+			width:100px;
+			height:100px;
+			resize:both;
 		}
 
 	</style>
 </head>
 <body>
+	<!-- START OF LOGIN POPUP -->
 	<div id="login_popup">
 		<form id="login_form">
 			<h2 id="login_popup_text"></h2>
 			<hr>
-			<input id="username" name="username" placeholder="username" type="text">
-			<input id="password" name="password" placeholder="password" type="password">
-			<input id="login_button" type="submit" value="Log in">
+			<input class="login_input" id="username" name="username" placeholder="username" type="text">
+			<input class="login_input" id="password" name="password" placeholder="password" type="password">
+			<input class="login_input" id="login_button" type="submit" value="Log in">
 		</form>
 	</div>
+	<!-- END OF LOGIN POPUP -->
 
 	<div id='container'>
 		<div id='user_list_area'>
 			<p id='user_list'></p>
 		</div>
 		<div id='chat_area'>
-			<p id='chat_box'></p>
-			<form id="chat_form" left="-20px">
-				<input id='input_box' type='form' placeholder="Type a message...">
+			<div id='chat_box'></div>
+			<form id="chat_form">
+				<input id='input_box' type='form' placeholder="Type a message..." autocomplete="off">
 				<input id='send_button' type="submit" value="Send">
 			</form>
-		</div>
 	</div>
 	
 	
