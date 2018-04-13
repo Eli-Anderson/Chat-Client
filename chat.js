@@ -59,7 +59,8 @@ $(document).ready(function(){
 		// data = {name, time stamp, message}
 		let para = document.createElement("p");
 		let text = getParsedText(data.text);
-		para.innerHTML = (data.timestamp + " " +data.username + ": "+text);
+		para.innerHTML = ("Just now: " + data.username + ": "+text);
+		para.time = data.timestamp;
 		para.classList.add("chat_message");
 		chatBox.appendChild(para);
 		
@@ -87,7 +88,7 @@ $(document).ready(function(){
 			let data = {
 				"username":username,
 				"text":inputBox.value,
-				"timestamp": d.getHours()+":"+d.getMinutes()+":"+d.getSeconds(),
+				"timestamp": d.getTime(),
 
 			}
 			socket.emit("sendMessage", data)
@@ -145,4 +146,24 @@ $(document).ready(function(){
 		result += substr;
 		return result;
 	}
+	function updateLoop() {
+		let messages = document.getElementsByClassName("chat_message");
+		for (let i=0; i<messages.length; i++) {
+			let msg = messages[i];
+			let d = new Date(msg.time)
+			d = Math.floor((Date.now() - d.getTime()) / 60000);
+			console.log(d);
+			let relativeTime = ": ";
+			if (d < 1) {
+				relativeTime = "Just now: ";
+			}
+			else if (d < 60) {
+				relativeTime = d + " min ago: ";
+			} else {
+				relativeTime = Math.floor(d / 60) + " hour ago: ";
+			}
+			msg.innerText = relativeTime + msg.innerText.substring(msg.innerText.indexOf(": ")+2);
+		}
+	}
+	setInterval(updateLoop, 1000);
 });
