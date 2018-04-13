@@ -1,6 +1,7 @@
 $(document).ready(function(){
 	let socket = io.connect();
 	let userList = document.getElementById("user_list");
+	let chatArea = document.getElementById("chat_area");
 	let chatBox = document.getElementById("chat_box");
 	let inputBox = document.getElementById("input_box");
 	let sendButton = document.getElementById("send_button");
@@ -13,27 +14,60 @@ $(document).ready(function(){
 	let messageArray = [];
 	let userArray = [];
 
-	let ORIGINAL_CHAT_AREA_HEIGHT = $("#chat_area").height();
+	let chatAreaSize = {
+		'width': $("#chat_area").width(),
+		'height': $("#chat_area").height(),
+	}
+
+	$("#chat_area").resize(function () {
+		console.log('test')
+		chatAreaSize.width = $("#chat_area").width();
+		chatAreaSize.height = $("#chat_area").height();
+	});
 
 	let onResize = function () {
+		// update the stored chatAreaSize, to make sure we can go
+		// back to the user's modified size after the window is
+		// restored to a size greater than our default
+		if (chatArea.style.height != "100%") {
+			// the window is not smaller than the default chat area height
+			chatAreaSize.height = $("#chat_area").height();
+		}
+		if (chatArea.style.width != "100%") {
+			// the window is not smaller than the default chat area width
+			chatAreaSize.width = $("#chat_area").width();
+		}
+
+
 
 		// hide user list if window width is too small
-		if ($("#chat_area").width() + $("#user_list_area").width() > $(window).width() - 30) {
+		console.log(chatAreaSize.width)
+		if (chatAreaSize.width + $("#user_list_area").width() > $(window).width() - 30) {
 			$("#user_list_area").hide();
 		} else {
 			$("#user_list_area").show();
 		}
 
-		// if window width is smaller than default chat area size,
+		// if window width is smaller than default chat area width,
 		// sets the chat area to the width of the window
-		if ($(window).width() < 480) {
+		if ($(window).width() < chatAreaSize.width + 10) {
 			$("#chat_area").width("100%");
 		} else {
-			$("#chat_area").width(480);
+			$("#chat_area").width(chatAreaSize.width);
 		}
-		if ($(window).height() < ORIGINAL_CHAT_AREA_HEIGHT) {
-			$("#chat_box").height($(window).height() - ($("#chat_form").height() + 41));
-			//@TODO: Also change user list height
+
+
+		// if window height is smaller than default chat area height
+		// (user_list_area and chat_area), sets the container area
+		// and its child divs to the height of the window
+		if ($(window).height() < Math.max(590, chatAreaSize.height)) {
+			$("#chat_area").height("100%");
+			$("#user_list_area").height("100%");
+			$("#container").height("calc(100% - 10px)");
+		} else {
+			$("#chat_area").height(chatAreaSize.height);
+			$("#user_list_area").height(580);
+			$("#container").height(580);
 		}
 	}
 	onResize();

@@ -5,6 +5,17 @@
 	<title>Chat Test</title>
 	<style type="text/css">
 		@import "http://fonts.googleapis.com/css?family=Raleway";
+
+
+		html {
+			min-height:300px;
+			min-width:300px;
+		}
+		body {
+			height:calc(100vh - 17px);
+			overflow: hidden;
+		}
+
 		/*----------------------------------------------
 		CSS settings for HTML div Exact Center
 		------------------------------------------------*/
@@ -62,11 +73,15 @@
 		border-radius:5px
 		}
 
+		#container {
+		}
+
 		#user_list_area {
 			float:left;
 			text-align:center;
 			width:180px;
-			height:480px;
+			height:580px;
+			min-height:300px; 
 			overflow-y:scroll;
 			border:2px solid gray;
 			border-radius:10px;
@@ -77,14 +92,15 @@
 		#chat_area {
 			float:left;
 			width:480px;
-			min-width: 300px;
-			min-height: 580px;
-			overflow: hidden;
-			resize: both;
+			height:580px;
+			min-width:300px;
+			min-height:300px;
+			overflow:hidden;
+			resize:both;
 		}
 
 		#chat_box {
-			height:480px;
+			height:calc(100% - 100px);
 			min-height:200px;
 			width:98%;
 			overflow-y:scroll;
@@ -94,9 +110,8 @@
 			background-color:#fff;
 		}
 		#input_box {
-			width:calc(100% - 50px);
-			background-color:#fff
-
+			width:calc(100% - 60px);
+			background-color:#fff;
 			padding:10px;
 			margin-top:30px;
 			border:2px solid #ccc;
