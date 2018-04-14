@@ -37,13 +37,13 @@ $(document).ready(function(){
 			chatAreaSize.width = $("#chat_area").width();
 		}
 
-
-
 		// hide user list if window width is too small
 		if (chatAreaSize.width + $("#user_list_area").width() > $(window).width() - 30) {
 			$("#user_list_area").hide();
+			$("#chat_area").css("maxWidth", "none");
 		} else {
 			$("#user_list_area").show();
+			$("#chat_area").css("maxWidth", $(window).width() - $("#user_list_area").width() - 20 );
 		}
 
 		// if window width is smaller than default chat area width,
@@ -88,7 +88,7 @@ $(document).ready(function(){
 
 	socket.on("receiveMessage", function (data) {
 		console.log("new message received")
-		// data = {username, time stamp, message}
+		// data = {username, time stamp, message, color}
 		let div = document.createElement("div");
 		let pUsername = document.createElement("p");
 		let pContent = document.createElement("p");
@@ -105,6 +105,8 @@ $(document).ready(function(){
 
 		div.time = data.timestamp;
 		div.classList.add("chat_message");
+		div.style.backgroundColor = data.color;
+
 		div.appendChild(pUsername);
 		div.appendChild(pContent);
 		div.appendChild(pTimestamp);
@@ -122,6 +124,9 @@ $(document).ready(function(){
 	socket.on("addUser", function (data) {
 		addUser(data);
 	});
+	socket.on("removeUser", function (data) {
+		removeUser(data);
+	});
 
 	$(chat_box).resize(function (e) {
 		console.log('resizing')
@@ -129,7 +134,7 @@ $(document).ready(function(){
 
 	$("#chat_form").submit(function (e) {
 		e.preventDefault();
-		console.log("called")
+		console.log("message sent");
 		if (inputBox.value != ""){
 			let d = new Date();
 
@@ -137,10 +142,9 @@ $(document).ready(function(){
 				"username":username,
 				"text":inputBox.value,
 				"timestamp": d.getTime(),
-
-			}
-			socket.emit("sendMessage", data)
-			inputBox.value = ""
+			};
+			socket.emit("sendMessage", data);
+			inputBox.value = "";
 		}
 		return false
 	})
@@ -166,7 +170,26 @@ $(document).ready(function(){
 		let para = document.createElement("p");
 		para.innerText = data.username;
 		userList.appendChild(para);
-		userList.scrollTop += userList.scrollHeight;
+		userList.scrollTop = userList.scrollHeight;
+	}
+
+	function removeUser(data) {
+		// data = {username, socket id}
+		console.log("a user has left", data);
+		for (let index in userArray) {
+			if (userArray[index].id == data.id) {
+				userArray.splice(index, 1);
+			}
+		}
+		
+		let userParas = userList.childNodes;
+		for (let index in userParas) {
+			let child = userParas[index];
+			if (child.innerText == data.username) {
+				userList.removeChild(child);
+				userList.scrollTop = userList.scrollHeight;
+			}
+		}
 	}
 
 	function getParsedText(text) {
