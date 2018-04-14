@@ -10,7 +10,7 @@ $(document).ready(function(){
 	let input_password = document.getElementById("password");
 	let loginButton = document.getElementById("login_button");
 
-	let username = "User"+Math.floor(Math.random()*10000000)
+	let username = "";
 	let messageArray = [];
 	let userArray = [];
 
@@ -20,7 +20,6 @@ $(document).ready(function(){
 	}
 
 	$("#chat_area").resize(function () {
-		console.log('test')
 		chatAreaSize.width = $("#chat_area").width();
 		chatAreaSize.height = $("#chat_area").height();
 	});
@@ -41,7 +40,6 @@ $(document).ready(function(){
 
 
 		// hide user list if window width is too small
-		console.log(chatAreaSize.width)
 		if (chatAreaSize.width + $("#user_list_area").width() > $(window).width() - 30) {
 			$("#user_list_area").hide();
 		} else {
@@ -90,13 +88,29 @@ $(document).ready(function(){
 
 	socket.on("receiveMessage", function (data) {
 		console.log("new message received")
-		// data = {name, time stamp, message}
-		let para = document.createElement("p");
-		let text = getParsedText(data.text);
-		para.innerHTML = ("Just now: " + data.username + ": "+text);
-		para.time = data.timestamp;
-		para.classList.add("chat_message");
-		chatBox.appendChild(para);
+		// data = {username, time stamp, message}
+		let div = document.createElement("div");
+		let pUsername = document.createElement("p");
+		let pContent = document.createElement("p");
+		let pTimestamp = document.createElement("p");
+
+		pUsername.innerText = data.username;
+		pUsername.classList.add("msg_username");
+
+		pContent.innerHTML = getParsedText(data.text);
+		pContent.classList.add("msg_content");
+
+		pTimestamp.innerText = "0m";
+		pTimestamp.classList.add("msg_timestamp");
+
+		div.time = data.timestamp;
+		div.classList.add("chat_message");
+		div.appendChild(pUsername);
+		div.appendChild(pContent);
+		div.appendChild(pTimestamp);
+		
+		chatBox.appendChild(document.createElement("br"));
+		chatBox.appendChild(div);
 		
 		chatBox.scrollTop = chatBox.scrollHeight;
 	});
@@ -183,20 +197,18 @@ $(document).ready(function(){
 	function updateLoop() {
 		let messages = document.getElementsByClassName("chat_message");
 		for (let i=0; i<messages.length; i++) {
-			let msg = messages[i];
-			let d = new Date(msg.time)
+			let timestamp = messages[i].querySelector(".msg_timestamp");
+			let d = new Date(messages[i].time)
 			d = Math.floor((Date.now() - d.getTime()) / 60000);
-			console.log(d);
-			let relativeTime = ": ";
-			if (d < 1) {
-				relativeTime = "Just now: ";
-			}
-			else if (d < 60) {
-				relativeTime = d + " min ago: ";
+			let relativeTime = ""
+			if (d < 60) {
+				relativeTime = d + "m";
+			} else if (d < 60 * 24) {
+				relativeTime = Math.floor(d / 60) + "h";
 			} else {
-				relativeTime = Math.floor(d / 60) + " hour ago: ";
+				relativeTime = Math.floor(d / (60 * 24)) + "d";
 			}
-			msg.innerText = relativeTime + msg.innerText.substring(msg.innerText.indexOf(": ")+2);
+			timestamp.innerText = relativeTime;
 		}
 	}
 	setInterval(updateLoop, 1000);
