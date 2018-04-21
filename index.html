@@ -6,11 +6,6 @@
 	<style type="text/css">
 		@import "http://fonts.googleapis.com/css?family=Raleway";
 
-
-		html {
-			min-height:300px;
-			min-width:300px;
-		}
 		body {
 			height:calc(100vh - 17px);
 			overflow: hidden;
@@ -28,7 +23,16 @@
 			z-index:9999;
 			display:none;
 		}
-		#login_form {
+		div#sign_up_popup {
+			position:absolute;
+			left:50%;
+			top:17%;
+			margin-left:-202px;
+			font-family:'Raleway',sans-serif;
+			z-index:9999;
+			display:none;
+		}
+		.login_form {
 			max-width:300px;
 			min-width:250px;
 			padding:10px 50px;
@@ -59,7 +63,7 @@
 			font-size:16px;
 			font-family:raleway;
 		}
-		input[type=submit] {
+		input[type=submit], input[type=button] {
 			text-decoration:none;
 			width:100%;
 			text-align:center;
@@ -73,7 +77,9 @@
 			border-radius:5px;
 		}
 
-		#container {
+		#sign_up_button, #login_back_button {
+			width:30%;
+			font-size:14px;
 		}
 
 		#user_list_area {
@@ -165,15 +171,31 @@
 <body>
 	<!-- START OF LOGIN POPUP -->
 	<div id="login_popup">
-		<form id="login_form">
+		<form class="login_form" id="login_form">
 			<h2 id="login_popup_text"></h2>
 			<hr>
-			<input class="login_input" id="username" name="username" placeholder="username" type="text">
-			<input class="login_input" id="password" name="password" placeholder="password" type="password">
+			<input id="sign_up_button" value="Sign Up" type="button">
+			<input class="login_input" id="login_username" name="username" placeholder="username" type="text" autocomplete="username">
+			<input class="login_input" id="login_password" name="password" placeholder="password" type="password" autocomplete="current-password">
 			<input class="login_input" id="login_button" type="submit" value="Log in">
 		</form>
 	</div>
 	<!-- END OF LOGIN POPUP -->
+
+	<!-- START OF SIGN UP POPUP -->
+	<div id="sign_up_popup">
+		<form class="login_form" id="sign_up_form">
+			<h2 id="sign_up_popup_text"></h2>
+			<hr>
+			<input id="login_back_button" value="Back" type="button">
+			<input class="login_input" id="sign_up_username" name="username" placeholder="username" type="text" autocomplete="new-username">
+			<input class="login_input" id="sign_up_password" name="password" placeholder="password" type="password" autocomplete="new-password">
+			<input class="login_input" id="sign_up_color" type=color>
+			
+			<input class="login_input" type="submit" value="Sign Up">
+		</form>
+	</div>
+	<!-- END OF SIGN UP POPUP -->
 
 	<div id='container'>
 		<div id='user_list_area'>

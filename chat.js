@@ -3,12 +3,6 @@ $(document).ready(function(){
 	let userList = document.getElementById("user_list");
 	let chatArea = document.getElementById("chat_area");
 	let chatBox = document.getElementById("chat_box");
-	let inputBox = document.getElementById("input_box");
-	let sendButton = document.getElementById("send_button");
-
-	let input_username = document.getElementById("username");
-	let input_password = document.getElementById("password");
-	let loginButton = document.getElementById("login_button");
 
 	let username = "";
 	let messageArray = [];
@@ -86,6 +80,17 @@ $(document).ready(function(){
 		console.log("An error occurred when logging in");
 	});
 
+	socket.on("signUpComplete", function () {
+		$("#sign_up_popup").hide();
+		$("#login_popup").show();
+		console.log("Account successfully created");
+	});
+
+	socket.on("signUpError", function () {
+		$("#sign_up_popup_text").text("Username already taken");
+		console.log("An error occurred when signing up");
+	});
+
 	socket.on("receiveMessage", function (data) {
 		console.log("new message received")
 		// data = {username, time stamp, message, color}
@@ -94,15 +99,19 @@ $(document).ready(function(){
 		let pContent = document.createElement("p");
 		let pTimestamp = document.createElement("p");
 
+		// set the username at the top
 		pUsername.innerText = data.username;
 		pUsername.classList.add("msg_username");
 
+		// set the content
 		pContent.innerHTML = getParsedText(data.text);
 		pContent.classList.add("msg_content");
 
+		// set the timestamp at the bottom
 		pTimestamp.innerText = "0m";
 		pTimestamp.classList.add("msg_timestamp");
 
+		// set a variable on the div to hold its timestamp
 		div.time = data.timestamp;
 		div.classList.add("chat_message");
 		div.style.backgroundColor = data.color;
@@ -135,27 +144,47 @@ $(document).ready(function(){
 	$("#chat_form").submit(function (e) {
 		e.preventDefault();
 		console.log("message sent");
-		if (inputBox.value != ""){
+		if ($("#input_box").val() != ""){
 			let d = new Date();
 
 			let data = {
-				"username":username,
-				"text":inputBox.value,
+				"text":$("#input_box").val(),
 				"timestamp": d.getTime(),
 			};
 			socket.emit("sendMessage", data);
-			inputBox.value = "";
+			$("#input_box").val("");
 		}
 		return false
 	})
 
 	$("#login_form").submit(function (e) {
 		e.preventDefault();
-		console.log("login attempted")
-		if (input_username.value.length >= 3) {
-			username = input_username.value;
+		console.log("login attempted");
+		socket.emit("loginDetailsSent", 
+			{'username':$("#login_username").val(), 'password':$("#login_password").val()}
+		);
+	});
+
+	$("#sign_up_button").click(function (e) {
+		$("#sign_up_popup").show();
+		$("#login_popup").hide();
+	});
+
+	$("#login_back_button").click(function (e) {
+		$("#sign_up_popup").hide();
+		$("#login_popup").show();
+	});
+
+	$("#sign_up_form").submit(function (e) {
+		e.preventDefault();
+		console.log("sign up attempted");
+		if ($("#sign_up_username").val().length >= 3 &&
+			$("#sign_up_password").val().length >= 8) {
+			socket.emit("createAccount", 
+				{'username': $("#sign_up_username").val(),
+				'password': $("#sign_up_password").val(),
+				'color': $("#sign_up_color").val()});
 		}
-		socket.emit("loginDetailsSent", {'username':username, 'password':input_password.value})
 	});
 
 	function addUser(data) {
@@ -212,7 +241,6 @@ $(document).ready(function(){
 			}
 			substr = substr.substring(index+match.length, substr.length);
 			match = substr.match(regex);
-			console.log(match)
 		}
 		result += substr;
 		return result;

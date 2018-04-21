@@ -40,11 +40,12 @@ let Users = {
 }
 
 function readUserList(path) {
-	let fs = require('fs')
-	let os = require('os')
-	fs.readFile(path, 'utf8', function (err,data) {
+	let fs = require('fs');
+	let os = require('os');
+	userList = {};
+	fs.readFile(path, 'utf8', function (err, data) {
 		if (err) {
-			return console.log(err);
+			return console.log("An error occurred when reading the user list", err);
 		}
 		for (let index in data.split(os.EOL)) {
 			let line = data.split(os.EOL)[index].split(" ");
@@ -52,6 +53,18 @@ function readUserList(path) {
 			userList[line[0]] = {'password': line[1], 'color':line[2]};
 		}
 	});
+}
+
+function appendUserList(path, user) {
+	let fs = require('fs');
+	let os = require('os');
+	fs.appendFile(path, 
+		os.EOL + user.username + " " + user.password + " " + user.color, 
+		function (err) {
+			if (err)
+				return console.log("An error occurred when appending the user list", err);
+		}
+	);
 }
 
 readUserList("users.txt");
@@ -62,8 +75,11 @@ io.sockets.on("connection", function (socket) {
 	socket.emit("getLoginDetails");
 
 	socket.on("loginDetailsSent", ( obj )=>{
+		console.log(obj)
 		// obj = {'username':xxxxxx, 'password':xxxxxx}
-		if (obj.password == userList[obj.username].password) {
+		if (userList[obj.username] != undefined &&
+			obj.password == userList[obj.username].password) {
+
 			let user = {'username': obj.username, 'id': socket.id}
 			Users.users.push(user);
 			socket.emit("loginSuccessful");
@@ -74,6 +90,16 @@ io.sockets.on("connection", function (socket) {
 		}
 
 	});
+
+	socket.on("createAccount", function (data) {
+		if (userList[data.username] == undefined) {
+			appendUserList("users.txt", data);
+			readUserList("users.txt");
+			socket.emit("signUpComplete");
+		} else {
+			socket.emit("signUpError");
+		}
+	})
 
 	socket.on("disconnect", function () {
 		console.log("A client has disconnected: "+socket.id+" "+socket.handshake.address);
@@ -90,6 +116,7 @@ io.sockets.on("connection", function (socket) {
 	socket.on("sendMessage", function (data) {
 		if (Users.exists(socket.id)) {
 			lastMessage = data
+			lastMessage.username = Users.getById(socket.id).username;
 			lastMessage.color = userList[Users.getById(socket.id).username].color;
 			messageArray.push(data)
 			Users.emit("receiveMessage", lastMessage)
